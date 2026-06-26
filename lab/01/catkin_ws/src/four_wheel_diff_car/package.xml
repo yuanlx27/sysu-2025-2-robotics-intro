@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>four_wheel_diff_car</name>
+  <version>0.1.0</version>
+  <description>Four-wheel differential drive car for Introduction to Robotics homework 1.</description>
+
+  <maintainer email="student@example.com">Student</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>gazebo_msgs</depend>
+  <depend>gazebo_ros</depend>
+  <depend>geometry_msgs</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rospy</depend>
+  <depend>rviz</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>xacro</depend>
+</package>

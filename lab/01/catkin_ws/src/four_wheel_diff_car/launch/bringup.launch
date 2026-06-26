@@ -1,0 +1,10 @@
+<launch>
+  <arg name="start_teleop" default="true"/>
+  <arg name="rviz_config" default="$(find four_wheel_diff_car)/rviz/four_wheel_diff_car.rviz"/>
+
+  <include file="$(find four_wheel_diff_car)/launch/gazebo.launch">
+    <arg name="start_teleop" value="$(arg start_teleop)"/>
+  </include>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" output="screen"/>
+</launch>

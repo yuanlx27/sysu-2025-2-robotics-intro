@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="four_wheel_diff_car">
+  <xacro:property name="body_length" value="0.60"/>
+  <xacro:property name="body_width" value="0.36"/>
+  <xacro:property name="body_height" value="0.16"/>
+  <xacro:property name="body_mass" value="5.0"/>
+  <xacro:property name="wheel_radius" value="0.08"/>
+  <xacro:property name="wheel_width" value="0.045"/>
+  <xacro:property name="wheel_mass" value="0.35"/>
+  <xacro:property name="wheel_x" value="0.22"/>
+  <xacro:property name="wheel_y" value="0.205"/>
+  <xacro:property name="wheel_z" value="0.08"/>
+
+  <material name="blue_body">
+    <color rgba="0.05 0.28 0.78 1.0"/>
+  </material>
+  <material name="dark_wheel">
+    <color rgba="0.02 0.02 0.025 1.0"/>
+  </material>
+  <material name="silver">
+    <color rgba="0.72 0.74 0.76 1.0"/>
+  </material>
+
+  <xacro:macro name="box_inertia" params="mass x y z">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${mass * (y * y + z * z) / 12.0}"
+        ixy="0"
+        ixz="0"
+        iyy="${mass * (x * x + z * z) / 12.0}"
+        iyz="0"
+        izz="${mass * (x * x + y * y) / 12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia_x_axis" params="mass radius length">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 1.57079632679 0"/>
+      <inertia
+        ixx="${mass * radius * radius / 2.0}"
+        ixy="0"
+        ixz="0"
+        iyy="${mass * (3.0 * radius * radius + length * length) / 12.0}"
+        iyz="0"
+        izz="${mass * (3.0 * radius * radius + length * length) / 12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_z + body_height / 2.0}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+      <material name="blue_body"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia mass="${body_mass}" x="${body_length}" y="${body_width}" z="${body_height}"/>
+  </link>
+
+  <link name="top_plate">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.38 0.22 0.035"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.38 0.22 0.035"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia mass="0.6" x="0.38" y="0.22" z="0.035"/>
+  </link>
+
+  <joint name="top_plate_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="top_plate"/>
+    <origin xyz="0 0 ${body_height / 2.0 + 0.03}" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:macro name="wheel" params="name x y">
+    <link name="${name}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.57079632679 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="dark_wheel"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.57079632679 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertia_x_axis mass="${wheel_mass}" radius="${wheel_radius}" length="${wheel_width}"/>
+    </link>
+
+    <joint name="${name}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}_wheel_link"/>
+      <origin xyz="${x} ${y} ${-body_height / 2.0}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <gazebo reference="${name}_wheel_link">
+      <material>Gazebo/Black</material>
+      <mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:wheel name="front_left" x="${wheel_x}" y="${wheel_y}"/>
+  <xacro:wheel name="front_right" x="${wheel_x}" y="${-wheel_y}"/>
+  <xacro:wheel name="rear_left" x="${-wheel_x}" y="${wheel_y}"/>
+  <xacro:wheel name="rear_right" x="${-wheel_x}" y="${-wheel_y}"/>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <gazebo reference="top_plate">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+</robot>

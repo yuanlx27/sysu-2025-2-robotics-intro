@@ -1,0 +1,35 @@
+<launch>
+  <arg name="world" default="$(find gazebo_ros)/worlds/empty.world"/>
+  <arg name="model_name" default="four_wheel_diff_car"/>
+  <arg name="start_teleop" default="true"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world)"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find four_wheel_diff_car)/urdf/four_wheel_diff_car.xacro"/>
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_four_wheel_diff_car"
+        args="-urdf -param robot_description -model $(arg model_name) -x 0 -y 0 -z 0.12"
+        output="screen"/>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+
+  <node pkg="four_wheel_diff_car" type="simple_diff_drive_controller.py"
+        name="simple_diff_drive_controller" output="screen">
+    <param name="model_name" value="$(arg model_name)"/>
+    <param name="wheel_radius" value="0.08"/>
+    <param name="wheel_separation" value="0.41"/>
+    <param name="control_rate" value="30.0"/>
+    <param name="cmd_timeout" value="0.5"/>
+  </node>
+
+  <node if="$(arg start_teleop)" pkg="four_wheel_diff_car" type="keyboard_teleop.py"
+        name="keyboard_teleop" output="screen"
+        launch-prefix="xterm -title keyboard_teleop -hold -e"/>
+</launch>
