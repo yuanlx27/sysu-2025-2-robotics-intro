@@ -1,0 +1,24 @@
+services:
+  ros:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: robotics-intro-lab03:noetic
+    container_name: robotics_intro_lab03_ros
+    working_dir: /workspace/catkin_ws
+    environment:
+      DISPLAY: ":1"
+      GAZEBO_MODEL_DATABASE_URI: ""
+      LAB03_LAUNCH: "turtle obs_world.launch"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      QT_X11_NO_MITSHM: "1"
+      TURTLEBOT3_MODEL: "burger"
+      VNC_PASSWORD: "ros"
+      VNC_RESOLUTION: "1280x800"
+    ports:
+      - "6082:6080"
+    volumes:
+      - .:/workspace
+    shm_size: "1gb"
+    stdin_open: true
+    tty: true
