@@ -1,0 +1,21 @@
+services:
+  ros:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: robotics-intro-lab02:noetic
+    container_name: robotics_intro_lab02_ros
+    working_dir: /workspace/catkin_ws
+    environment:
+      DISPLAY: ":1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      QT_X11_NO_MITSHM: "1"
+      VNC_PASSWORD: "ros"
+      VNC_RESOLUTION: "1280x800"
+    ports:
+      - "6081:6080"
+    volumes:
+      - .:/workspace
+    shm_size: "1gb"
+    stdin_open: true
+    tty: true
