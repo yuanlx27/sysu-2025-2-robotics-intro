@@ -40,31 +40,16 @@ nav_msgs/Path
 
 == 编译与运行
 
-进入作业二目录：
+进入作业二目录后启动 Docker Compose：
 
 ```bash
 cd lab/02
+docker compose up
 ```
 
-构建 ROS Noetic Docker 镜像：
+如果本地不存在镜像，Docker Compose 会自动构建镜像。容器启动后，`entrypoint.sh` 会自动加载 ROS Noetic 环境，编译 `/workspace/catkin_ws`，加载 `/workspace/catkin_ws/devel/setup.bash`，启动 noVNC 图形桌面，并运行轨迹跟踪实验。
 
-```bash
-docker compose build
-```
-
-启动容器：
-
-```bash
-docker compose up -d
-```
-
-进入容器：
-
-```bash
-docker compose exec ros bash
-```
-
-若需要使用 RViz 或 RQT 图形界面，在浏览器中打开 noVNC：
+在浏览器中打开 noVNC：
 
 ```text
 http://localhost:6081/vnc.html
@@ -72,28 +57,12 @@ http://localhost:6081/vnc.html
 
 默认 VNC 密码为 `ros`。
 
-编译 catkin 工作空间：
-
-```bash
-cd /workspace/catkin_ws
-catkin_make
-```
-
-加载环境：
-
-```bash
-source devel/setup.bash
-```
-
-运行系统测试和可视化界面：
-
-```bash
-roslaunch tracking_pid test_tracking_pid.test rviz:=true
-```
+进入桌面后可以看到 RViz，机器人会在仿真环境中跟随目标轨迹运动。
 
 打开 RQT 动态调参界面：
 
 ```bash
+docker compose exec ros bash
 rosrun rqt_reconfigure rqt_reconfigure
 ```
 

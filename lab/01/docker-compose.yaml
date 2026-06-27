@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     image: robotics-intro-lab01:noetic
     container_name: robotics_intro_lab01_ros
-    working_dir: /workspace
+    working_dir: /workspace/catkin_ws
     environment:
       DISPLAY: ":1"
       LIBGL_ALWAYS_SOFTWARE: "1"
@@ -19,3 +19,4 @@ services:
     shm_size: "1gb"
     stdin_open: true
     tty: true
+    command: roslaunch four_wheel_diff_car bringup.launch

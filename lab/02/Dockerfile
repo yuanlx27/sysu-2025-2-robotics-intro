@@ -48,13 +48,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN rosdep init 2>/dev/null || true
 
-RUN printf '%s\n' \
-    'source /opt/ros/${ROS_DISTRO:-noetic}/setup.bash' \
-    'if [ -f /workspace/catkin_ws/devel/setup.bash ]; then' \
-    '  source /workspace/catkin_ws/devel/setup.bash' \
-    'fi' \
-    >> /root/.bashrc
-
 WORKDIR /workspace
 
 COPY scripts/entrypoint.sh /ros_entrypoint_lab02.sh
@@ -63,4 +56,3 @@ RUN chmod +x /ros_entrypoint_lab02.sh
 EXPOSE 6080
 
 ENTRYPOINT ["/ros_entrypoint_lab02.sh"]
-CMD ["bash", "-lc", "tail -f /dev/null"]

@@ -11,6 +11,15 @@ export DISPLAY="${DISPLAY:-:1}"
 export VNC_RESOLUTION="${VNC_RESOLUTION:-1280x800}"
 export VNC_PASSWORD="${VNC_PASSWORD:-ros}"
 
+if [ -d /workspace/catkin_ws/src ]; then
+  echo "Building ROS workspace at /workspace/catkin_ws"
+  cd /workspace/catkin_ws
+  catkin_make
+  if [ -f /workspace/catkin_ws/devel/setup.bash ]; then
+    source /workspace/catkin_ws/devel/setup.bash
+  fi
+fi
+
 mkdir -p "${HOME}/.vnc"
 printf "%s\n" "${VNC_PASSWORD}" | vncpasswd -f > "${HOME}/.vnc/passwd"
 chmod 600 "${HOME}/.vnc/passwd"
@@ -32,5 +41,7 @@ websockify --web=/usr/share/novnc 6080 "localhost:590${DISPLAY#:}" >/tmp/novnc.l
 
 echo "noVNC desktop: http://localhost:6080/vnc.html"
 echo "VNC password: ${VNC_PASSWORD}"
+
+cd /workspace/catkin_ws
 
 exec "$@"

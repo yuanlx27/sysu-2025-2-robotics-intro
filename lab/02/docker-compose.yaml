@@ -8,6 +8,7 @@ services:
     working_dir: /workspace/catkin_ws
     environment:
       DISPLAY: ":1"
+      LAB02_LAUNCH: "tracking_pid lab02_demo.launch rviz:=true"
       LIBGL_ALWAYS_SOFTWARE: "1"
       QT_X11_NO_MITSHM: "1"
       VNC_PASSWORD: "ros"

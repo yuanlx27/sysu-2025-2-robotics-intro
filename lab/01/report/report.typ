@@ -29,22 +29,10 @@
 cd lab/01
 ```
 
-构建 Docker 镜像：
+启动容器。若本地不存在镜像，Docker Compose 会根据 `Dockerfile` 自动构建镜像；容器启动时会自动进入 `/workspace/catkin_ws` 并执行 `catkin_make`，完成 ROS 工程编译：
 
 ```bash
-docker compose build
-```
-
-启动容器：
-
-```bash
-docker compose up -d
-```
-
-进入容器：
-
-```bash
-docker compose exec ros bash
+docker compose up
 ```
 
 如果需要查看图形界面，在浏览器中打开 noVNC 页面：
@@ -59,55 +47,19 @@ http://localhost:6080/vnc.html
 ros
 ```
 
-== 编译 ROS 工程
-
-进入 catkin 工作空间：
-
-```bash
-cd /workspace/catkin_ws
-```
-
-编译工程：
-
-```bash
-catkin_make
-```
-
-编译完成后加载工作空间环境：
-
-```bash
-source devel/setup.bash
-```
+容器完成自动编译后会继续自动执行 `roslaunch four_wheel_diff_car bringup.launch`，因此打开 noVNC 页面后即可看到 RViz、Gazebo 和键盘控制窗口。
 
 本实验包名为 `four_wheel_diff_car`。功能包中包含两个 Python 节点：`keyboard_teleop.py` 用于发布 `/cmd_vel` 键盘速度指令，`simple_diff_drive_controller.py` 用于订阅 `/cmd_vel` 并更新 Gazebo 中的小车位姿，同时发布 `/joint_states` 供 RViz 显示车轮状态。
 
 == RViz 模型显示
 
-运行模型显示启动文件：
+自动启动的 `bringup.launch` 会同时打开 RViz。若 RViz 中出现蓝色车体、灰色上盖和四个黑色车轮，且左侧 `RobotModel` 状态为 `Ok`，说明 URDF/Xacro 模型、固定坐标系和关节连接关系配置正确。
 
-```bash
-roslaunch four_wheel_diff_car display.launch
-```
-
-该启动文件会加载 `four_wheel_diff_car.xacro` 生成机器人描述参数 `robot_description`，启动 `robot_state_publisher` 和 `joint_state_publisher_gui`，并打开 RViz。若 RViz 中出现蓝色车体、灰色上盖和四个黑色车轮，且左侧 `RobotModel` 状态为 `Ok`，说明 URDF/Xacro 模型、固定坐标系和关节连接关系配置正确。
-
-`display.launch` 只用于模型展示，不启动 Gazebo，也不启动运动控制器，因此小车不会在仿真环境中运动。
+项目中也保留了 `display.launch`，它只用于模型展示，不启动 Gazebo，也不启动运动控制器。
 
 == Gazebo 仿真与键盘控制
 
-若当前还在运行 `display.launch`，先按 `Ctrl-C` 退出。然后运行完整启动文件：
-
-```bash
-roslaunch four_wheel_diff_car bringup.launch
-```
-
-`bringup.launch` 会启动 Gazebo、加载小车模型、启动自写差速控制器、启动键盘控制窗口，并同时打开 RViz。也可以只启动 Gazebo 仿真部分：
-
-```bash
-roslaunch four_wheel_diff_car gazebo.launch
-```
-
-在 noVNC 桌面中找到标题为 `keyboard_teleop` 的终端窗口，点击该窗口使其获得键盘焦点。使用以下按键控制小车：
+自动启动的 `bringup.launch` 会启动 Gazebo、加载小车模型、启动自写差速控制器、启动键盘控制窗口，并同时打开 RViz。在 noVNC 桌面中找到标题为 `keyboard_teleop` 的终端窗口，点击该窗口使其获得键盘焦点。使用以下按键控制小车：
 
 ```text
 w / s : 前进 / 后退

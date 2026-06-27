@@ -3,13 +3,10 @@ set -e
 
 source "/opt/ros/${ROS_DISTRO:-noetic}/setup.bash"
 
-if [ -f /workspace/catkin_ws/devel/setup.bash ]; then
-  source /workspace/catkin_ws/devel/setup.bash
-fi
-
 export DISPLAY="${DISPLAY:-:1}"
 export VNC_RESOLUTION="${VNC_RESOLUTION:-1280x800}"
 export VNC_PASSWORD="${VNC_PASSWORD:-ros}"
+export LAB02_LAUNCH="${LAB02_LAUNCH:-tracking_pid lab02_demo.launch rviz:=true}"
 
 mkdir -p "${HOME}/.vnc"
 printf "%s\n" "${VNC_PASSWORD}" | vncpasswd -f > "${HOME}/.vnc/passwd"
@@ -32,5 +29,16 @@ websockify --web=/usr/share/novnc 6080 "localhost:590${DISPLAY#:}" >/tmp/novnc.l
 
 echo "noVNC desktop: http://localhost:6081/vnc.html"
 echo "VNC password: ${VNC_PASSWORD}"
+
+cd /workspace/catkin_ws
+echo "Building catkin workspace..."
+catkin_make
+
+source /workspace/catkin_ws/devel/setup.bash
+echo "Starting lab 02 demo..."
+
+if [ "$#" -eq 0 ]; then
+  set -- roslaunch ${LAB02_LAUNCH}
+fi
 
 exec "$@"
